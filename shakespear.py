@@ -53,7 +53,7 @@ def compute_loss():
     model.eval()
     stats = {}
 
-    for mode in ("train", "val"):# ------------------
+    for mode in ("train", "val"):
         losses = torch.zeros(EVAL_STEPS)
         for i in range(EVAL_STEPS):
             xb, yb = sample_batch(mode)
