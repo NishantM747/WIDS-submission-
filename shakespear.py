@@ -2,9 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-# ------------------
 # configuration
-# ------------------
 BATCH = 32
 CTX_LEN = 8
 TRAIN_STEPS = 10000
@@ -15,9 +13,8 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 torch.manual_seed(1337)
 
-# ------------------
 # load and preprocess text
-# ------------------
+
 with open("shakespear.py", encoding="utf-8") as fh:
     raw_text = fh.read()
 
@@ -39,9 +36,9 @@ split_idx = int(0.9 * len(corpus))
 train_tokens = corpus[:split_idx]
 val_tokens = corpus[split_idx:]
 
-# ------------------
+
 # batching utility
-# ------------------
+
 def sample_batch(mode):
     source = train_tokens if mode == "train" else val_tokens
     starts = torch.randint(0, len(source) - CTX_LEN, (BATCH,))
@@ -56,7 +53,7 @@ def compute_loss():
     model.eval()
     stats = {}
 
-    for mode in ("train", "val"):
+    for mode in ("train", "val"):# ------------------
         losses = torch.zeros(EVAL_STEPS)
         for i in range(EVAL_STEPS):
             xb, yb = sample_batch(mode)
@@ -67,9 +64,9 @@ def compute_loss():
     model.train()
     return stats
 
-# ------------------
-# bigram language model
-# ------------------
+
+# language model
+
 class BigramLM(nn.Module):
     def __init__(self, vocab_size):
         super().__init__()
@@ -96,9 +93,9 @@ class BigramLM(nn.Module):
             seed = torch.cat([seed, nxt], dim=1)
         return seed
 
-# ------------------
+
 # training
-# ------------------
+
 model = BigramLM(VOCAB).to(DEVICE)
 optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
 
@@ -118,9 +115,9 @@ for step in range(TRAIN_STEPS):
     loss.backward()
     optimizer.step()
 
-# ------------------
-# prompt-based generation
-# ------------------
+
+# promptting
+
 model.eval()
 
 prompt = input("\nEnter prompt: ")
